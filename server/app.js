@@ -23,6 +23,7 @@
 // │  ✅ Environment Vars    — All secrets in .env, never hardcoded        │
 // └──────────────────────────────────────────────────────────────────────┘
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
@@ -113,6 +114,15 @@ app.get('/api/health', async (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Serve frontend static files in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+  
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client', 'dist', 'index.html'));
+  });
+}
 
 // Error handler
 app.use(errorHandler);
