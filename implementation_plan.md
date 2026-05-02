@@ -1,4 +1,4 @@
-# VotePath AI — Hackathon Score Maximization Plan (81.46% → 95%+)
+# Election Guide — Hackathon Score Maximization Plan (81.46% → 95%+)
 
 ## Executive Summary
 

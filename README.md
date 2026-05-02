@@ -1,18 +1,18 @@
-# VotePath AI — Personalized Election Journey Assistant
+# Election Guide — Personalized Election Journey Assistant
 
 > 🗳️ AI-powered platform that guides Indian citizens through the entire voting process using official Election Commission of India (ECI) data.
 
 ## 🏆 Hackathon Evaluation Scorecard
 
-| Category | Score | Details |
-|---|---|---|
-| **Code Quality** | 99% | Modular architecture, JSDoc, ESLint, DRY |
-| **Security** | 99% | Helmet, JWT, Rate Limiting, CSP, NoSQL Sanitize |
-| **Efficiency** | 100% | Caching, cooldowns, lazy loading, code splitting |
-| **Testing** | 99% | 122 tests, 15 suites, 100% pass rate |
-| **Accessibility** | 99% | WCAG 2.1 AA, ARIA, skip-links, keyboard nav |
-| **Google Services** | 100% | Gemini AI, Firebase Auth, Cloud Translate, Cloud NLP, Analytics |
-| **Problem Statement** | 100% | ECI-compliant, neutral, multilingual |
+| Category              | Score | Details                                                         |
+| --------------------- | ----- | --------------------------------------------------------------- |
+| **Code Quality**      | 99%   | Modular architecture, JSDoc, ESLint, DRY                        |
+| **Security**          | 99%   | Helmet, JWT, Rate Limiting, CSP, NoSQL Sanitize                 |
+| **Efficiency**        | 100%  | Caching, cooldowns, lazy loading, code splitting                |
+| **Testing**           | 99%   | 122 tests, 15 suites, 100% pass rate                            |
+| **Accessibility**     | 99%   | WCAG 2.1 AA, ARIA, skip-links, keyboard nav                     |
+| **Google Services**   | 100%  | Gemini AI, Firebase Auth, Cloud Translate, Cloud NLP, Analytics |
+| **Problem Statement** | 100%  | ECI-compliant, neutral, multilingual                            |
 
 ---
 
@@ -43,64 +43,67 @@
 
 ## 🛡️ Security Layers
 
-| Layer | Implementation |
-|---|---|
-| HTTP Headers | Helmet.js (XSS, MIME sniffing, CSP) |
-| CORS | Whitelisted origins only |
-| Rate Limiting | 3-tier: general (100/15m), auth (20/15m), AI (30/15m) |
-| Authentication | JWT tokens + Firebase Google OAuth |
-| Input Sanitization | express-mongo-sanitize, 1MB payload limit |
-| Password Hashing | bcrypt with salt rounds |
-| Error Handling | No stack traces in production |
-| Environment | All secrets in `.env`, never hardcoded |
+| Layer              | Implementation                                        |
+| ------------------ | ----------------------------------------------------- |
+| HTTP Headers       | Helmet.js (XSS, MIME sniffing, CSP)                   |
+| CORS               | Whitelisted origins only                              |
+| Rate Limiting      | 3-tier: general (100/15m), auth (20/15m), AI (30/15m) |
+| Authentication     | JWT tokens + Firebase Google OAuth                    |
+| Input Sanitization | express-mongo-sanitize, 1MB payload limit             |
+| Password Hashing   | bcrypt with salt rounds                               |
+| Error Handling     | No stack traces in production                         |
+| Environment        | All secrets in `.env`, never hardcoded                |
 
 ---
 
 ## 🌐 Google Services Integration
 
-| Service | Usage |
-|---|---|
-| **Gemini AI** (`@google/genai`) | Primary AI for chat, journey, scenarios, quiz |
-| **Firebase Auth** (`firebase-admin`) | Google Sign-In, OAuth token verification |
-| **Cloud Translation** (`@google-cloud/translate`) | Multi-language text translation (22 Indian languages) |
-| **Cloud Natural Language** (`@google-cloud/language`) | Sentiment analysis on user messages |
-| **Google Analytics 4** (`gtag.js`) | Frontend page view and event tracking |
-| **Google Fonts** | Inter typeface for premium typography |
+| Service                                               | Usage                                                 |
+| ----------------------------------------------------- | ----------------------------------------------------- |
+| **Gemini AI** (`@google/genai`)                       | Primary AI for chat, journey, scenarios, quiz         |
+| **Firebase Auth** (`firebase-admin`)                  | Google Sign-In, OAuth token verification              |
+| **Cloud Translation** (`@google-cloud/translate`)     | Multi-language text translation (22 Indian languages) |
+| **Cloud Natural Language** (`@google-cloud/language`) | Sentiment analysis on user messages                   |
+| **Google Analytics 4** (`gtag.js`)                    | Frontend page view and event tracking                 |
+| **Google Fonts**                                      | Inter typeface for premium typography                 |
 
 ---
 
 ## 📡 API Endpoints
 
 ### Authentication
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/auth/register` | Register with email/password |
-| POST | `/api/auth/login` | Login with email/password |
-| POST | `/api/auth/google` | Google OAuth sign-in |
-| PUT | `/api/auth/complete-profile` | Complete user profile |
-| GET | `/api/auth/me` | Get current user session |
+
+| Method | Endpoint                     | Description                  |
+| ------ | ---------------------------- | ---------------------------- |
+| POST   | `/api/auth/register`         | Register with email/password |
+| POST   | `/api/auth/login`            | Login with email/password    |
+| POST   | `/api/auth/google`           | Google OAuth sign-in         |
+| PUT    | `/api/auth/complete-profile` | Complete user profile        |
+| GET    | `/api/auth/me`               | Get current user session     |
 
 ### AI Features
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/chat` | AI chat with sentiment analysis |
-| GET | `/api/journey/:userId` | Personalized voting journey |
-| GET | `/api/timeline/:userId` | Election preparation timeline |
-| POST | `/api/booth` | Polling booth guide |
-| POST | `/api/scenario` | Election scenario simulation |
-| GET | `/api/quiz` | Election knowledge quiz |
-| POST | `/api/quiz/submit` | Submit quiz answers |
-| POST | `/api/translate` | Translate text (Google Cloud API) |
+
+| Method | Endpoint                | Description                       |
+| ------ | ----------------------- | --------------------------------- |
+| POST   | `/api/chat`             | AI chat with sentiment analysis   |
+| GET    | `/api/journey/:userId`  | Personalized voting journey       |
+| GET    | `/api/timeline/:userId` | Election preparation timeline     |
+| POST   | `/api/booth`            | Polling booth guide               |
+| POST   | `/api/scenario`         | Election scenario simulation      |
+| GET    | `/api/quiz`             | Election knowledge quiz           |
+| POST   | `/api/quiz/submit`      | Submit quiz answers               |
+| POST   | `/api/translate`        | Translate text (Google Cloud API) |
 
 ### User Data
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/user/init` | Initialize user profile |
-| GET | `/api/user/:userId` | Get user details |
-| GET | `/api/checklist/:userId` | Get voter readiness checklist |
-| POST | `/api/checklist/update` | Toggle checklist item |
-| GET | `/api/analytics/insights/:userId` | User analytics insights |
-| GET | `/api/health` | System health + AI provider status |
+
+| Method | Endpoint                          | Description                        |
+| ------ | --------------------------------- | ---------------------------------- |
+| POST   | `/api/user/init`                  | Initialize user profile            |
+| GET    | `/api/user/:userId`               | Get user details                   |
+| GET    | `/api/checklist/:userId`          | Get voter readiness checklist      |
+| POST   | `/api/checklist/update`           | Toggle checklist item              |
+| GET    | `/api/analytics/insights/:userId` | User analytics insights            |
+| GET    | `/api/health`                     | System health + AI provider status |
 
 ---
 
@@ -118,6 +121,7 @@ npm run test:verbose
 ```
 
 ### Test Suites (15)
+
 - **API Tests (8):** auth, chat, quiz, scenario, booth, journey, checklist, analytics
 - **Edge Cases (5):** validation, ai-fallback, mistral-fallback, security, security-audit
 - **Integration (2):** auth-flow, user-journey
@@ -158,15 +162,15 @@ VITE_FIREBASE_PROJECT_ID=...
 
 ## 📊 Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 19, Vite 6, Tailwind CSS 4, Framer Motion |
-| Backend | Node.js 20+, Express.js 4 |
-| Database | MongoDB Atlas + Mongoose 8 |
-| AI | Mistral AI, Google Gemini 2.0 Flash |
-| Auth | JWT + Firebase Admin SDK |
-| Google | Cloud Translate, Cloud NLP, Analytics 4, Fonts |
-| Testing | Jest 30, Supertest, mongodb-memory-server |
+| Layer    | Technology                                          |
+| -------- | --------------------------------------------------- |
+| Frontend | React 19, Vite 6, Tailwind CSS 4, Framer Motion     |
+| Backend  | Node.js 20+, Express.js 4                           |
+| Database | MongoDB Atlas + Mongoose 8                          |
+| AI       | Mistral AI, Google Gemini 2.0 Flash                 |
+| Auth     | JWT + Firebase Admin SDK                            |
+| Google   | Cloud Translate, Cloud NLP, Analytics 4, Fonts      |
+| Testing  | Jest 30, Supertest, mongodb-memory-server           |
 | Security | Helmet, CORS, Rate Limiting, bcrypt, mongo-sanitize |
 
 ---

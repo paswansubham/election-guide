@@ -1,7 +1,7 @@
 {
-  "name": "votepath-ai-server",
+  "name": "election-guide-server",
   "version": "1.0.0",
-  "description": "VotePath AI Backend Server",
+  "description": "Election Guide Backend Server",
   "main": "index.js",
   "scripts": {
     "build": "npm install",
