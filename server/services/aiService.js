@@ -12,24 +12,40 @@ const geminiService = require('./geminiService');
 const mistralService = require('./mistralService');
 const cacheService = require('./cacheService');
 
+/** @constant {number} How often to re-check provider availability (ms) */
+const HEALTH_CHECK_INTERVAL_MS = 30_000;
+
+/** @constant {number} Default provider cooldown after a transient error (ms) */
+const DEFAULT_COOLDOWN_MS = 60_000;
+
+/** @constant {number} Extended cooldown for rate-limit errors (ms) */
+const QUOTA_COOLDOWN_MS = 120_000;
+
+/** @constant {number} Extended cooldown for auth/key errors (ms) */
+const AUTH_COOLDOWN_MS = 300_000;
+
+/** @constant {number} How many response-time samples to keep per provider */
+const MAX_TRACKED_TIMES = 10;
+
 class AIService {
   constructor() {
     this.currentProvider = null;
     this.geminiAvailable = false;
     this.mistralAvailable = false;
     this.lastHealthCheck = 0;
-    this.healthCheckInterval = 30000;
+    this.healthCheckInterval = HEALTH_CHECK_INTERVAL_MS;
 
-    // Provider cooldown tracking (skip failed providers temporarily)
+    /** @type {Map<string, number>} Provider name → cooldown expiry timestamp */
     this.providerCooldowns = new Map();
-    this.cooldownDuration = 60000; // 1 minute cooldown after failure
+    this.cooldownDuration = DEFAULT_COOLDOWN_MS;
 
-    // Response time tracking (for smart provider selection)
+    /** @type {number[]} Rolling window of Gemini response times (ms) */
     this.responseTimesGemini = [];
+    /** @type {number[]} Rolling window of Mistral response times (ms) */
     this.responseTimesMistral = [];
-    this.maxTrackedTimes = 10;
+    this.maxTrackedTimes = MAX_TRACKED_TIMES;
 
-    // Stats
+    /** @type {Object} Cumulative request/success/failure counters */
     this.stats = {
       totalRequests: 0,
       cacheHits: 0,
@@ -42,6 +58,14 @@ class AIService {
   }
 
   // ── Health Check ────────────────────────────────────────────
+
+  /**
+   * Returns the current availability and performance status of all AI providers.
+   * Results are cached for `HEALTH_CHECK_INTERVAL_MS` to avoid redundant checks.
+   *
+   * @async
+   * @returns {Promise<{gemini: boolean, mistral: boolean, activeProvider: string|null, stats: Object}>}
+   */
   async checkHealth() {
     const now = Date.now();
     if (now - this.lastHealthCheck < this.healthCheckInterval) {
@@ -160,7 +184,15 @@ class AIService {
     };
   }
 
-  // ── Clean AI Response — strip asterisks from all providers ──
+  // ── Response Cleaning ─────────────────────────────────────
+
+  /**
+   * Normalises AI response text by converting markdown asterisk syntax
+   * into plain readable text and clean bullet points.
+   *
+   * @param {string} text - Raw response string from any AI provider
+   * @returns {string} Cleaned, human-readable text
+   */
   _cleanResponse(text) {
     if (!text || typeof text !== 'string') return text;
 
@@ -178,7 +210,19 @@ class AIService {
       .trim();
   }
 
-  // ── Timed Generate (tracks response time) ───────────────────
+  // ── Timed Generate ───────────────────────────────────────
+
+  /**
+   * Invokes the specified provider's `generate()` method and records the
+   * wall-clock response time for performance tracking.
+   *
+   * @async
+   * @param {'gemini'|'mistral'} provider - Which AI provider to call
+   * @param {string} prompt - The user's query
+   * @param {string} systemPrompt - Optional system/context prompt
+   * @returns {Promise<{content: string, provider: string, responseTime: number}>}
+   * @throws {Error} If an unknown provider name is supplied
+   */
   async _timedGenerate(provider, prompt, systemPrompt) {
     const start = Date.now();
     let result;
@@ -199,6 +243,14 @@ class AIService {
   }
 
   // ── Cooldown Management ─────────────────────────────────────
+
+  /**
+   * Returns true if a provider is currently in its error-backoff cooldown window.
+   * Automatically clears expired cooldowns.
+   *
+   * @param {'gemini'|'mistral'} provider
+   * @returns {boolean}
+   */
   _isOnCooldown(provider) {
     const expiry = this.providerCooldowns.get(provider);
     if (!expiry) return false;
@@ -209,25 +261,45 @@ class AIService {
     return true;
   }
 
+  /**
+   * Puts a provider into a timed cooldown based on the error type.
+   * Rate-limit errors get a longer cooldown than transient network errors.
+   *
+   * @param {'gemini'|'mistral'} provider
+   * @param {Error} error - The error that triggered the cooldown
+   */
   _setCooldown(provider, error) {
     const msg = error.message || '';
-    // Longer cooldown for rate limits, shorter for transient errors
     let duration = this.cooldownDuration;
     if (msg.includes('429') || msg.includes('RESOURCE_EXHAUSTED') || msg.includes('quota')) {
-      duration = 120000; // 2 min for rate limits
+      duration = QUOTA_COOLDOWN_MS; // 2 min for rate-limit / quota errors
     } else if (msg.includes('401') || msg.includes('Invalid API key')) {
-      duration = 300000; // 5 min for auth errors
+      duration = AUTH_COOLDOWN_MS;  // 5 min for auth / key errors
     }
     this.providerCooldowns.set(provider, Date.now() + duration);
   }
 
   // ── Response Time Tracking ──────────────────────────────────
+
+  /**
+   * Appends a response time sample to the rolling window for a provider.
+   * Evicts the oldest sample once the window exceeds `maxTrackedTimes`.
+   *
+   * @param {'gemini'|'mistral'} provider
+   * @param {number} ms - Response time in milliseconds
+   */
   _trackResponseTime(provider, ms) {
     const arr = provider === 'gemini' ? this.responseTimesGemini : this.responseTimesMistral;
     arr.push(ms);
     if (arr.length > this.maxTrackedTimes) arr.shift();
   }
 
+  /**
+   * Computes the average response time from the rolling window for a provider.
+   *
+   * @param {'gemini'|'mistral'} provider
+   * @returns {number|null} Average response time in ms, or null if no samples yet
+   */
   _getAvgResponseTime(provider) {
     const arr = provider === 'gemini' ? this.responseTimesGemini : this.responseTimesMistral;
     if (arr.length === 0) return null;
@@ -235,6 +307,15 @@ class AIService {
   }
 
   // ── Hardcoded Fallback Responses ────────────────────────────
+
+  /**
+   * Returns an authoritative, ECI-sourced static response when all AI providers
+   * are unavailable. Detects the topic from keyword matching and returns
+   * the most relevant pre-built guidance block.
+   *
+   * @param {string} prompt - The user's original query
+   * @returns {string} Markdown-formatted guidance text
+   */
   _getFallbackResponse(prompt) {
     const lower = prompt.toLowerCase().trim();
 
@@ -339,6 +420,12 @@ India's democracy is strengthened by every vote. Here's what you need to know:
 👉 **Next Step:** Start by checking your voter registration status!`;
   }
 
+  /**
+   * Alias for `checkHealth()`. Called by the `/api/health` endpoint.
+   *
+   * @async
+   * @returns {Promise<Object>} Current provider health and stats
+   */
   async getStatus() {
     return this.checkHealth();
   }
