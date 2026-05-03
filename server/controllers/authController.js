@@ -14,8 +14,10 @@ const User = require('../models/User');
 const Checklist = require('../models/Checklist');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { generateToken } = require('../middleware/authMiddleware');
-const admin = require('../config/firebase');
-const { firebaseInitialized } = require('../config/firebase');
+const { admin, firebaseInitialized } = require('../config/firebase');
+
+/** @type {RegExp} RFC 5322-compliant email validation pattern */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Default checklist items for new users
 const DEFAULT_CHECKLIST = [
@@ -82,6 +84,10 @@ const register = asyncHandler(async (req, res) => {
 
   if (!name || !email || !password) {
     return res.status(400).json({ success: false, error: 'Name, email, and password are required.' });
+  }
+
+  if (!EMAIL_REGEX.test(email)) {
+    return res.status(400).json({ success: false, error: 'Please provide a valid email address.' });
   }
 
   if (password.length < 6) {

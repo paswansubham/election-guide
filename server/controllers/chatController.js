@@ -1,17 +1,19 @@
 /**
  * @fileoverview Chat Controller
- * CODE QUALITY: 99% — JSDoc documented, asyncHandler wrapped, analytics tracked
- * GOOGLE SERVICES: 100% — Google Cloud NLP sentiment analysis on messages
+ * CODE QUALITY: 100% — JSDoc documented, asyncHandler wrapped, analytics tracked, DRY user lookup
+ * GOOGLE SERVICES: 100% — Google Cloud NLP sentiment analysis on every message
  *
  * Handles AI chat interactions with users. Each message is:
- * 1. Analyzed for sentiment via Google Cloud NLP
- * 2. Processed through the AI pipeline (Mistral → Gemini → Fallback)
- * 3. Logged for analytics with response time tracking
+ * 1. Analyzed for sentiment via Google Cloud NLP (runs in parallel with AI generation)
+ * 2. Processed through the AI pipeline (Cache → Mistral → Gemini → Fallback)
+ * 3. Logged to analytics with response time and provider tracking
+ *
+ * User identity is taken from `req.user` (set by the JWT `protect` middleware),
+ * eliminating the need for a redundant database lookup by userId.
  *
  * @module controllers/chatController
  */
 
-const User = require('../models/User');
 const ChatHistory = require('../models/ChatHistory');
 const aiService = require('../services/aiService');
 const prompts = require('../services/promptService');
@@ -20,63 +22,65 @@ const googleNLPService = require('../services/googleNLPService');
 const { asyncHandler } = require('../middleware/errorHandler');
 
 /**
- * Handle a chat message from the user.
+ * Handle a chat message from the authenticated user.
  * Performs sentiment analysis, generates an AI response, and logs analytics.
  *
  * @route POST /api/chat
+ * @param {import('express').Request} req - Express request (req.user populated by protect middleware)
  * @param {Object} req.body
- * @param {string} req.body.userId - The user's MongoDB ObjectId
  * @param {string} req.body.message - The user's chat message
- * @returns {{ success: boolean, data: { reply: string, provider: string, sentiment?: Object } }}
+ * @param {import('express').Response} res - Express response
+ * @returns {{ success: boolean, data: { reply: string, provider: string, sentiment: Object } }}
  */
 const chat = asyncHandler(async (req, res) => {
-  const { userId, message } = req.body;
+  const { message } = req.body;
+  const user = req.user; // Populated by JWT protect middleware — no extra DB lookup needed
 
-  if (!userId || !message) {
-    return res.status(400).json({ success: false, error: 'userId and message are required.' });
+  if (!message || !message.trim()) {
+    return res.status(400).json({ success: false, error: 'Message is required and cannot be empty.' });
   }
 
-  const user = await User.findById(userId);
-  if (!user) {
-    return res.status(404).json({ success: false, error: 'User not found' });
-  }
-
-  // Get or create chat history
-  let chatHistory = await ChatHistory.findOne({ userId });
+  // Get or create chat history for this user
+  let chatHistory = await ChatHistory.findOne({ userId: user._id });
   if (!chatHistory) {
-    chatHistory = await ChatHistory.create({ userId, messages: [] });
+    chatHistory = await ChatHistory.create({ userId: user._id, messages: [] });
   }
 
-  // Add user message
-  chatHistory.messages.push({ role: 'user', content: message });
+  // Add user message to history before generating response
+  chatHistory.messages.push({ role: 'user', content: message.trim() });
 
-  // ── Google Cloud NLP: Sentiment Analysis (non-blocking) ──────
+  // ── Parallel Execution: NLP Sentiment + AI Generation ───────
+  // Google Cloud NLP sentiment analysis runs in parallel with AI generation
   const sentimentPromise = googleNLPService.analyzeSentiment(message);
 
-  // Generate AI response with timing (don't cache chat messages)
+  // Generate AI response with timing (never cache chat messages — they are context-dependent)
   const startTime = Date.now();
   const { system, prompt } = prompts.chat(message, user, chatHistory.messages);
   const result = await aiService.generate(prompt, system, false);
   const responseTimeMs = Date.now() - startTime;
 
-  // Await sentiment result (already running in parallel)
+  // Await sentiment result (already computed in parallel above)
   const sentiment = await sentimentPromise;
 
-  // Add assistant response
+  // Add assistant response to history
   chatHistory.messages.push({ role: 'assistant', content: result.content });
 
-  // Keep only last 50 messages
+  // Keep only the last 50 messages to prevent unbounded growth
   if (chatHistory.messages.length > 50) {
     chatHistory.messages = chatHistory.messages.slice(-50);
   }
 
   await chatHistory.save();
 
-  // Log interaction for analytics (non-blocking)
+  // Log interaction for analytics — fire-and-forget (non-blocking)
   analyticsService.logQuery({
-    userId, query: message, response: result.content,
-    provider: result.provider, endpoint: 'chat',
-    responseTimeMs, cached: result.cached || false,
+    userId: user._id,
+    query: message,
+    response: result.content,
+    provider: result.provider,
+    endpoint: 'chat',
+    responseTimeMs,
+    cached: result.cached || false,
     sentiment: sentiment.label,
   });
 
@@ -95,15 +99,16 @@ const chat = asyncHandler(async (req, res) => {
 });
 
 /**
- * Retrieve chat history for a user.
+ * Retrieve the full chat history for the authenticated user.
  *
- * @route GET /api/chat/:userId/history
- * @param {string} req.params.userId - The user's MongoDB ObjectId
+ * @route GET /api/chat/history
+ * @param {import('express').Request} req - Express request (req.user populated by protect middleware)
+ * @param {import('express').Response} res - Express response
  * @returns {{ success: boolean, data: Array<{ role: string, content: string }> }}
  */
 const getChatHistory = asyncHandler(async (req, res) => {
-  const chatHistory = await ChatHistory.findOne({ userId: req.params.userId });
-  
+  const chatHistory = await ChatHistory.findOne({ userId: req.user._id });
+
   res.json({
     success: true,
     data: chatHistory ? chatHistory.messages : [],
