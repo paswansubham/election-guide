@@ -1,5 +1,5 @@
 /**
- * ESLint Configuration for VotePath AI Server
+ * ESLint Configuration for election-guide Server
  * CODE QUALITY: 99% — Enforces consistent coding standards
  */
 module.exports = {

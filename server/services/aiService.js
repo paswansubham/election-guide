@@ -64,7 +64,7 @@ class AIService {
 
     this.currentProvider = this.geminiAvailable ? 'gemini'
       : this.mistralAvailable ? 'mistral'
-      : null;
+        : null;
 
     return {
       gemini: this.geminiAvailable,
@@ -116,7 +116,7 @@ class AIService {
           console.log('🤖 Using Mistral AI (primary)...');
           const result = await this._timedGenerate('mistral', prompt, systemPrompt);
 
-          if (hash) cacheService.set(hash, result.content, 'mistral').catch(() => {});
+          if (hash) cacheService.set(hash, result.content, 'mistral').catch(() => { });
 
           this.stats.mistralSuccess++;
           return { ...result, content: this._cleanResponse(result.content), cached: false };
@@ -136,7 +136,7 @@ class AIService {
           console.log('☁️ Falling back to Gemini...');
           const result = await this._timedGenerate('gemini', prompt, systemPrompt);
 
-          if (hash) cacheService.set(hash, result.content, 'gemini').catch(() => {});
+          if (hash) cacheService.set(hash, result.content, 'gemini').catch(() => { });
 
           this.stats.geminiSuccess++;
           return { ...result, content: this._cleanResponse(result.content), cached: false };
@@ -238,12 +238,12 @@ class AIService {
   _getFallbackResponse(prompt) {
     const lower = prompt.toLowerCase().trim();
 
-    const greetings = ['hi','hey','hello','namaste','hii','hiii','yo','sup','hola','ok','okay','thanks','thank you','haan','theek','fine','good','nice','cool','hmm','kya haal','kaise ho','how are you','what\'s up','wassup','hey there'];
+    const greetings = ['hi', 'hey', 'hello', 'namaste', 'hii', 'hiii', 'yo', 'sup', 'hola', 'ok', 'okay', 'thanks', 'thank you', 'haan', 'theek', 'fine', 'good', 'nice', 'cool', 'hmm', 'kya haal', 'kaise ho', 'how are you', 'what\'s up', 'wassup', 'hey there'];
     const isGreeting = greetings.some(g => lower === g || lower.startsWith(g + ' ') || lower.startsWith(g + ',') || lower.startsWith(g + '!'));
     const isShort = lower.length < 15 && !lower.includes('vote') && !lower.includes('register') && !lower.includes('booth') && !lower.includes('election') && !lower.includes('eci') && !lower.includes('voter') && !lower.includes('evm');
 
     if (isGreeting || isShort) {
-      return `🙏 **Namaste!** Welcome to **VotePath AI** — your personal Indian election assistant.
+      return `🙏 **Namaste!** Welcome to **election-guide** — your personal Indian election assistant.
 
 ## 🤖 Who Am I?
 I am an AI-powered guide built on official **Election Commission of India (ECI)** data to help you navigate the entire voting process — from registration to casting your vote.

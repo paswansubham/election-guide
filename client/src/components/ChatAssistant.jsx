@@ -21,13 +21,13 @@ export default function ChatAssistant({ fullHeight = false }) {
         } else {
           setMessages([{
             role: 'assistant',
-            content: `Namaste ${user.name}! 🙏 I'm your VotePath AI assistant. I'm here to help you with anything related to voting in India.\n\nYou can ask me things like:\n• "How do I register as a voter?"\n• "What documents do I need?"\n• "Where is my polling booth?"\n• "Mujhe vote dene ke liye kya karna hoga?"\n\nWhat would you like to know?`,
+            content: `Namaste ${user.name}! 🙏 I'm your election-guide assistant. I'm here to help you with anything related to voting in India.\n\nYou can ask me things like:\n• "How do I register as a voter?"\n• "What documents do I need?"\n• "Where is my polling booth?"\n• "Mujhe vote dene ke liye kya karna hoga?"\n\nWhat would you like to know?`,
           }]);
         }
       } catch (e) {
         setMessages([{
           role: 'assistant',
-          content: `Hi ${user.name}! 👋 I'm your VotePath AI assistant. Ask me anything about the Indian voting process!`,
+          content: `Hi ${user.name}! 👋 I'm your election-guide assistant. Ask me anything about the Indian voting process!`,
         }]);
       }
     };

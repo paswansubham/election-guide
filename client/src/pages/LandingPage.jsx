@@ -63,7 +63,7 @@ const HOW_IT_WORKS = [
 ];
 
 const TESTIMONIALS = [
-  { name: 'Priya S.', location: 'Mumbai, MH', text: 'First time voter and I had no idea where to start. VotePath AI made everything so clear — from getting my voter ID to finding my booth!', rating: 5 },
+  { name: 'Priya S.', location: 'Mumbai, MH', text: 'First time voter and I had no idea where to start. election-guide made everything so clear — from getting my voter ID to finding my booth!', rating: 5 },
   { name: 'Rahul K.', location: 'Lucknow, UP', text: 'The AI chatbot answered all my questions about EVM and VVPAT in Hindi. Really helpful for my parents who are not tech-savvy.', rating: 5 },
   { name: 'Ananya M.', location: 'Bangalore, KA', text: 'Love the checklist feature — it tracks your readiness percentage. I went from 30% to 100% in just two days!', rating: 5 },
 ];
@@ -80,7 +80,7 @@ export default function LandingPage() {
               🗳️
             </div>
             <div>
-              <span className="text-base font-bold gradient-text">VotePath AI</span>
+              <span className="text-base font-bold gradient-text">election-guide</span>
               <span className="hidden sm:inline text-xs text-text-muted ml-2">Election Journey Assistant</span>
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
             <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-2">What We Offer</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">Everything You Need for Election Day</h2>
-            <p className="text-text-muted text-sm mt-2 max-w-lg mx-auto">From registration status to booth location — VotePath AI covers your entire voting journey</p>
+            <p className="text-text-muted text-sm mt-2 max-w-lg mx-auto">From registration status to booth location — election-guide covers your entire voting journey</p>
           </motion.div>
 
           <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}
@@ -321,7 +321,7 @@ export default function LandingPage() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-lg bg-bg-elevated flex items-center justify-center text-xs shadow-md">🗳️</div>
-                <span className="text-sm font-bold gradient-text">VotePath AI</span>
+                <span className="text-sm font-bold gradient-text">election-guide</span>
               </div>
               <p className="text-xs text-text-muted leading-relaxed">
                 AI-powered election journey assistant helping Indian citizens navigate the voting process with confidence.
@@ -346,7 +346,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-border/50 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-[10px] text-text-muted">© 2025 VotePath AI — Not affiliated with Election Commission of India. For educational purposes.</p>
+            <p className="text-[10px] text-text-muted">© 2025 election-guide — Not affiliated with Election Commission of India. For educational purposes.</p>
             <div className="flex items-center gap-4 text-[10px] text-text-muted">
               <span>🇮🇳 Made for India</span>
               <span>🔒 Non-Political</span>

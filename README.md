@@ -1,4 +1,4 @@
-# 🗳️ VotePath AI — Personalized Election Journey Assistant
+# 🗳️ election-guide — Personalized Election Journey Assistant
 
 > An AI-powered civic platform that guides Indian citizens through every step of the democratic process — from voter registration to booth navigation — using official Election Commission of India (ECI) data, Google Cloud AI, and multilingual support for 22 Indian languages.
 
@@ -34,7 +34,7 @@ India has **969 million registered voters** yet civic awareness remains critical
 - Language barriers in official government communications
 - No personalized guidance through the election timeline
 
-**VotePath AI** solves this by providing a single, intelligent, multilingual interface that personalizes the entire election journey per citizen — from eligibility check to post-vote civic engagement.
+**election-guide** solves this by providing a single, intelligent, multilingual interface that personalizes the entire election journey per citizen — from eligibility check to post-vote civic engagement.
 
 ---
 

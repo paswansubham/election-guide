@@ -32,7 +32,7 @@ describe('AI Service — Fallback & Caching', () => {
 
       const result = await aiService.generate('hello', '', false);
 
-      expect(result.content).toContain('VotePath AI');
+      expect(result.content).toContain('election-guide');
       expect(result.content).toContain('Namaste');
     });
 

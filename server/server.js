@@ -43,7 +43,7 @@ const validateEnv = () => {
  */
 const startServer = (port) => {
   const server = app.listen(port, () => {
-    console.log(`\n🚀 VotePath AI Server running on port ${port}`);
+    console.log(`\n🚀 election-guide Server running on port ${port}`);
     console.log(`📡 Health check: http://localhost:${port}/api/health`);
     console.log(`🌍 Environment: ${ENV}`);
     console.log(`🔐 Auth: JWT + Google OAuth enabled\n`);

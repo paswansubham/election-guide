@@ -108,7 +108,7 @@ export default function AuthPage() {
           <div className="w-14 h-14 rounded-2xl bg-bg-elevated flex items-center justify-center mx-auto mb-4 text-2xl shadow-xl shadow-primary/20">
             🗳️
           </div>
-          <h1 className="text-2xl font-bold gradient-text">VotePath AI</h1>
+          <h1 className="text-2xl font-bold gradient-text">election-guide</h1>
           <p className="text-text-muted text-sm mt-1">Election Journey Assistant</p>
         </div>
 
@@ -125,8 +125,8 @@ export default function AuthPage() {
                   aria-selected={mode === tab}
                   aria-controls="auth-form"
                   className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${mode === tab
-                      ? 'bg-primary text-white shadow-md shadow-primary/20'
-                      : 'text-text-muted hover:text-text-primary'
+                    ? 'bg-primary text-white shadow-md shadow-primary/20'
+                    : 'text-text-muted hover:text-text-primary'
                     }`}>
                   {tab === 'login' ? 'Sign In' : 'Create Account'}
                 </button>
@@ -140,8 +140,8 @@ export default function AuthPage() {
               whileHover={{ scale: isFirebaseConfigured ? 1.01 : 1 }}
               whileTap={{ scale: isFirebaseConfigured ? 0.98 : 1 }}
               className={`w-full flex items-center justify-center gap-3 py-3 rounded-xl border transition-all text-sm font-medium mb-5 ${isFirebaseConfigured
-                  ? 'bg-bg-elevated border-border hover:border-primary/30 text-text-primary disabled:opacity-60 disabled:cursor-not-allowed'
-                  : 'bg-bg-elevated/50 border-border/50 text-text-muted/50 cursor-not-allowed'
+                ? 'bg-bg-elevated border-border hover:border-primary/30 text-text-primary disabled:opacity-60 disabled:cursor-not-allowed'
+                : 'bg-bg-elevated/50 border-border/50 text-text-muted/50 cursor-not-allowed'
                 }`}
               title={!isFirebaseConfigured ? 'Google Sign-In requires Firebase configuration in client/.env' : ''}
             >

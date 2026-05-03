@@ -46,13 +46,13 @@ export default function ChatPage() {
         } else {
           setMessages([{
             role: 'assistant',
-            content: `🙏 **Namaste ${user?.name}!** Welcome to **VotePath AI** — your personal Indian election assistant.\n\n## 🤖 Who Am I?\nI am an AI-powered guide built on official **Election Commission of India (ECI)** data to help you navigate the entire voting process.\n\n## 🛠️ How Can I Help You?\n• **Voter Registration** — How to register, Form 6, eligibility\n• **Voter ID Issues** — Lost ID, name mismatch, corrections\n• **Polling Booth** — Find your booth, what to carry\n• **EVM & VVPAT** — How electronic voting machines work\n• **Election Rules** — Model Code of Conduct, voter rights\n• **Special Voting** — NRI, senior citizens, PwD, postal ballot\n• **Complaints** — Report violations via cVIGIL app\n• **Hindi / English** — I can answer in both! 🇮🇳\n\n## 📞 Quick Info\n• **ECI Helpline:** 1950\n• **Voter Portal:** https://voters.eci.gov.in/\n\n👉 **Next Step:** Ask me anything about voting, or type your question in Hindi!`,
+            content: `🙏 **Namaste ${user?.name}!** Welcome to **election-guide** — your personal Indian election assistant.\n\n## 🤖 Who Am I?\nI am an AI-powered guide built on official **Election Commission of India (ECI)** data to help you navigate the entire voting process.\n\n## 🛠️ How Can I Help You?\n• **Voter Registration** — How to register, Form 6, eligibility\n• **Voter ID Issues** — Lost ID, name mismatch, corrections\n• **Polling Booth** — Find your booth, what to carry\n• **EVM & VVPAT** — How electronic voting machines work\n• **Election Rules** — Model Code of Conduct, voter rights\n• **Special Voting** — NRI, senior citizens, PwD, postal ballot\n• **Complaints** — Report violations via cVIGIL app\n• **Hindi / English** — I can answer in both! 🇮🇳\n\n## 📞 Quick Info\n• **ECI Helpline:** 1950\n• **Voter Portal:** https://voters.eci.gov.in/\n\n👉 **Next Step:** Ask me anything about voting, or type your question in Hindi!`,
           }]);
         }
       } catch {
         setMessages([{
           role: 'assistant',
-          content: `🙏 **Namaste ${user?.name}!** Welcome to **VotePath AI**.\n\n## 🤖 Who Am I?\nI am your AI election assistant powered by **ECI** data.\n\n## 🛠️ I Can Help With:\n• Voter Registration & ID issues\n• Polling booth search\n• EVM & VVPAT explained\n• Election rules & voter rights\n• Hindi & English support 🇮🇳\n\n👉 **Next Step:** Ask me anything about voting!`,
+          content: `🙏 **Namaste ${user?.name}!** Welcome to **election-guide**.\n\n## 🤖 Who Am I?\nI am your AI election assistant powered by **ECI** data.\n\n## 🛠️ I Can Help With:\n• Voter Registration & ID issues\n• Polling booth search\n• EVM & VVPAT explained\n• Election rules & voter rights\n• Hindi & English support 🇮🇳\n\n👉 **Next Step:** Ask me anything about voting!`,
         }]);
       }
     };
@@ -246,8 +246,8 @@ export default function ChatPage() {
         </div>
         <button onClick={() => { setVoiceOn(!voiceOn); if (voiceOn) window.speechSynthesis?.cancel(); }}
           className={`p-2.5 rounded-xl transition-all border ${voiceOn
-              ? 'bg-primary/15 border-primary/30 text-primary'
-              : 'bg-bg-elevated border-border text-text-muted hover:text-text-primary'
+            ? 'bg-primary/15 border-primary/30 text-primary'
+            : 'bg-bg-elevated border-border text-text-muted hover:text-text-primary'
             }`}
           aria-label={voiceOn ? 'Disable voice reading' : 'Enable voice reading'}
           aria-pressed={voiceOn}>

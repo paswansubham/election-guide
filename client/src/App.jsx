@@ -1,4 +1,4 @@
-// ── VotePath AI — Frontend Application ──────────────────────────
+// ── election-guide — Frontend Application ──────────────────────────
 // ACCESSIBILITY: 99% (WCAG 2.1 AA Compliant)
 //   ✅ Skip navigation links    — keyboard users can bypass nav
 //   ✅ ARIA landmarks           — role="main", role="navigation", aria-label
@@ -91,7 +91,7 @@ function AuthRequired({ children }) {
 function AppRoutes() {
   const { user, loading } = useUser();
 
-  if (loading) return <LoadingScreen text="Starting VotePath AI" />;
+  if (loading) return <LoadingScreen text="Starting election-guide" />;
 
   return (
     <Routes>

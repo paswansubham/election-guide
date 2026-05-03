@@ -84,14 +84,14 @@ export default function DashboardLayout() {
       {/* ====== TOP HORIZONTAL NAVBAR ====== */}
       <header className="sticky top-0 z-40 bg-bg-card/80 backdrop-blur-xl border-b border-border shadow-sm px-4 lg:px-6 flex-shrink-0 transition-colors duration-500">
         <div className="flex items-center justify-between h-16">
-          
+
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-lg shadow-md shadow-primary/20">
               🗳️
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-base font-bold text-primary leading-tight">VotePath AI</h1>
+              <h1 className="text-base font-bold text-primary leading-tight">election-guide</h1>
               <p className="text-[10px] text-text-muted leading-tight font-medium uppercase tracking-wider">Election Commission</p>
             </div>
           </div>
@@ -101,10 +101,9 @@ export default function DashboardLayout() {
             {NAV_ITEMS.map(({ path, iconEmoji, label, end }) => (
               <NavLink key={path} to={path} end={end}
                 className={({ isActive }) =>
-                  `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 group relative ${
-                    isActive
-                      ? 'bg-bg-elevated'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-bg-elevated/50'
+                  `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 group relative ${isActive
+                    ? 'bg-bg-elevated'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-bg-elevated/50'
                   }`
                 }>
                 {({ isActive }) => (
@@ -196,7 +195,7 @@ export default function DashboardLayout() {
                     🗳️
                   </div>
                   <div>
-                    <h1 className="text-sm font-bold text-primary leading-tight">VotePath AI</h1>
+                    <h1 className="text-sm font-bold text-primary leading-tight">election-guide</h1>
                     <p className="text-[9px] text-text-muted uppercase tracking-widest font-medium">Election Assistant</p>
                   </div>
                 </motion.div>
@@ -238,10 +237,9 @@ export default function DashboardLayout() {
                     <NavLink to={path} end={end}
                       onClick={() => setMobileMenuOpen(false)}
                       className={({ isActive }) =>
-                        `flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all relative overflow-hidden ${
-                          isActive
-                            ? 'bg-primary/10 text-primary font-semibold border border-primary/20'
-                            : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary border border-transparent'
+                        `flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all relative overflow-hidden ${isActive
+                          ? 'bg-primary/10 text-primary font-semibold border border-primary/20'
+                          : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary border border-transparent'
                         }`
                       }>
                       {({ isActive }) => (
